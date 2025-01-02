@@ -304,7 +304,6 @@ LINK_ENTITY_TO_CLASS( player, CCSPlayer );
 PRECACHE_REGISTER(player);
 
 BEGIN_SEND_TABLE_NOBASE( CCSPlayer, DT_CSLocalPlayerExclusive )
-	SendPropFloat( SENDINFO( m_flStamina ), 14, 0, 0, 1400  ),
 	SendPropInt( SENDINFO( m_iDirection ), 1, SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO( m_iShotsFired ), 8, SPROP_UNSIGNED ),
 	SendPropFloat( SENDINFO( m_flVelocityModifier ), 8, 0, 0, 1  ),
@@ -885,8 +884,6 @@ void CCSPlayer::Spawn()
 	ClearFlashbangScreenFade();
 
 	m_flVelocityModifier = 1.0f;
-
-	ResetStamina();
 
 	m_flLastRadarUpdateTime = 0.0f;
 
@@ -5750,12 +5747,6 @@ bool CCSPlayer::BumpWeapon( CBaseCombatWeapon *pBaseWeapon )
 	}
 
 	return false;
-}
-
-
-void CCSPlayer::ResetStamina( void )
-{
-	m_flStamina = 0.0f;
 }
 
 void CCSPlayer::RescueZoneTouch( inputdata_t &inputdata )

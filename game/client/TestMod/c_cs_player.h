@@ -251,7 +251,6 @@ public:
 	// When the progress bar should start.
 	CNetworkVar( float, m_flProgressBarStartTime );
 
-	CNetworkVar( float, m_flStamina );
 	CNetworkVar( int, m_iDirection );	// The current lateral kicking direction; 1 = right,  0 = left
 	CNetworkVar( int, m_iShotsFired );	// number of shots fired recently
 	CNetworkVar( bool, m_bNightVisionOn );

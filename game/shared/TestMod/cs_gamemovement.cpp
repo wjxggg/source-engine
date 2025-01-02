@@ -19,11 +19,6 @@
 	#include "KeyValues.h"
 #endif
 
-#define STAMINA_MAX				100.0
-#define STAMINA_COST_JUMP		25.0
-#define STAMINA_COST_FALL		20.0
-#define STAMINA_RECOVER_RATE	19.0
-
 extern bool g_bMovementOptimizations;
 
 ConVar sv_timebetweenducks( "sv_timebetweenducks", "0", FCVAR_REPLICATED, "Minimum time before recognizing consecutive duck key", true, 0.0, true, 2.0 );
@@ -439,26 +434,6 @@ void CCSGameMovement::PlayerMove()
 
 void CCSGameMovement::WalkMove( void )
 {
-	if ( m_pCSPlayer->m_flStamina > 0 )
-	{
-		float flRatio;
-
-		flRatio = ( STAMINA_MAX - ( ( m_pCSPlayer->m_flStamina / 1000.0 ) * STAMINA_RECOVER_RATE ) ) / STAMINA_MAX;
-		
-		// This Goldsrc code was run with variable timesteps and it had framerate dependencies.
-		// People looking at Goldsrc for reference are usually 
-		// (these days) measuring the stoppage at 60fps or greater, so we need
-		// to account for the fact that Goldsrc was applying more stopping power
-		// since it applied the slowdown across more frames.
-		float flReferenceFrametime = 1.0f / 70.0f;
-		float flFrametimeRatio = gpGlobals->frametime / flReferenceFrametime;
-
-		flRatio = pow( flRatio, flFrametimeRatio );
-
-		mv->m_vecVelocity.x *= flRatio;
-		mv->m_vecVelocity.y *= flRatio;
-	}
-
 	BaseClass::WalkMove();
 
 	CheckForLadders( player->GetGroundEntity() != NULL );
@@ -599,18 +574,6 @@ void CCSGameMovement::CheckForLadders( bool wasOnGround )
 
 void CCSGameMovement::ReduceTimers( void )
 {
-	float frame_msec = 1000.0f * gpGlobals->frametime;
-
-	if ( m_pCSPlayer->m_flStamina > 0 )
-	{
-		m_pCSPlayer->m_flStamina -= frame_msec;
-
-		if ( m_pCSPlayer->m_flStamina < 0 )
-		{
-			m_pCSPlayer->m_flStamina = 0;
-		}
-	}
-
 	BaseClass::ReduceTimers();
 }
 
@@ -741,17 +704,6 @@ bool CCSGameMovement::CheckJumpButton( void )
 	{
 		mv->m_vecVelocity[2] += flGroundFactor * sqrt(2 * 800 * 57.0);  // 2 * gravity * height
 	}
-
-	if ( m_pCSPlayer->m_flStamina > 0 )
-	{
-		float flRatio;
-
-		flRatio = ( STAMINA_MAX - ( ( m_pCSPlayer->m_flStamina  / 1000.0 ) * STAMINA_RECOVER_RATE ) ) / STAMINA_MAX;
-
-		mv->m_vecVelocity[2] *= flRatio;
-	}
-
-	m_pCSPlayer->m_flStamina = ( STAMINA_COST_JUMP / STAMINA_RECOVER_RATE ) * 1000.0;
 	
 	FinishGravity();
 

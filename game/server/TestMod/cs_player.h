@@ -491,7 +491,6 @@ public:
 	void ClearFlashbangScreenFade ( void );
 	bool ShouldDoLargeFlinch( int nHitGroup, CBaseEntity *pAttacker );
 
-	void ResetStamina( void );
 	bool IsArmored( int nHitGroup );
 	void Pain( bool HasArmour );
 	
@@ -687,7 +686,6 @@ public:
 	CNetworkVar( bool, m_bInHostageRescueZone );
 	void RescueZoneTouch( inputdata_t &inputdata );
 
-	CNetworkVar( float, m_flStamina );
 	CNetworkVar( int, m_iDirection );	// The current lateral kicking direction; 1 = right,  0 = left
 	CNetworkVar( int, m_iShotsFired );	// number of shots fired recently
 
