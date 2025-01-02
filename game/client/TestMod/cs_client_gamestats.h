@@ -13,7 +13,7 @@
 
 #include "steam/steam_api.h"
 #include "GameEventListener.h"
-#include "../game/shared/cstrike/cs_gamestats_shared.h"
+#include "cs_gamestats_shared.h"
 
 struct SRoundData : public BaseStatData 
 {

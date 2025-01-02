@@ -12,7 +12,7 @@
 #include "vgui_controls/PHandle.h"
 #include "econ/econ_controls.h"
 #if defined( CSTRIKE_DLL )
-#  include "cstrike/clientmode_csnormal.h"
+#  include "clientmode_csnormal.h"
 #elif defined( TF_CLIENT_DLL )
 #  include "tf/clientmode_tf.h"
 #endif

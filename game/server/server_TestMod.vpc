@@ -1,0 +1,319 @@
+//-----------------------------------------------------------------------------
+//	SERVER_TESTMOD.VPC
+//
+//	Project Script
+//-----------------------------------------------------------------------------
+
+$Macro SRCDIR		"..\.."
+$Macro GAMENAME 	"TestMod"
+
+$Include "$SRCDIR\game\server\server_base.vpc"
+$Include "$SRCDIR\game\server\nav_mesh.vpc"
+
+$Configuration
+{
+	$Compiler
+	{
+		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\TestMod\control,$SRCDIR\game\shared\TestMod,.\TestMod,.\TestMod\bot,.\TestMod\bot\states,$SRCDIR\game\shared\TestMod\bot,.\TestMod\hostage,.\TestMod\control"
+		$PreprocessorDefinitions		"$BASE;BOTS;CSTRIKE_DLL;NEXT_BOT"
+	}
+
+	$Linker
+	{
+		$AdditionalDependencies			"$BASE ws2_32.lib" [$WIN32]
+	}
+}
+
+$Project "Server (TestMod)"
+{
+	$Folder	"Source Files"
+	{
+		-$File	"AI_ConCommands.cpp"
+		$File	"hl2\Func_Monitor.cpp"
+		$File	"h_cycler.cpp"
+		$File	"h_cycler.h"
+		$File	"$SRCDIR\game\shared\predicted_viewmodel.cpp"
+		$File	"$SRCDIR\game\shared\predicted_viewmodel.h"
+		$File	"$SRCDIR\game\shared\hl2\survival_gamerules.cpp"
+		$File	"team_objectiveresource.cpp"
+		$File	"team_objectiveresource.h"
+		$File	"team_spawnpoint.cpp"
+		$File	"team_spawnpoint.h"
+		$File	"$SRCDIR\game\shared\teamplayroundbased_gamerules.cpp"
+
+		$Folder	"CounterStrike DLL"
+		{
+			$File	"$SRCDIR\game\shared\TestMod\cs_achievement_constants.h"
+			$File	"$SRCDIR\game\shared\TestMod\achievements_cs.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\achievements_cs.h"
+			$File	"$SRCDIR\game\shared\TestMod\basecsgrenade_projectile.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\basecsgrenade_projectile.h"
+			$File	"$SRCDIR\game\shared\TestMod\cs_ammodef.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\cs_ammodef.h"
+			$File	"TestMod\cs_autobuy.cpp"
+			$File	"TestMod\cs_autobuy.h"
+			$File	"$SRCDIR\game\shared\TestMod\cs_blackmarket.cpp"
+			$File	"TestMod\cs_client.cpp"
+			$File	"TestMod\cs_client.h"
+			$File	"TestMod\cs_eventlog.cpp"
+			$File	"TestMod\cs_gameinterface.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\cs_gamemovement.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\cs_gamerules.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\cs_gamerules.h"
+			$File	"TestMod\cs_gamestats.cpp"
+			$File	"TestMod\cs_gamestats.h"			
+			$File	"$SRCDIR\game\shared\TestMod\cs_gamestats_shared.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\cs_gamestats_shared.h"
+			$File	"$SRCDIR\game\shared\steamworks_gamestats.cpp"
+			$File	"$SRCDIR\game\shared\steamworks_gamestats.h"			
+			$File	"TestMod\cs_hltvdirector.cpp"
+			$File	"TestMod\cs_player.cpp"
+			$File	"TestMod\cs_player.h"
+			$File	"TestMod\cs_player_resource.cpp"
+			$File	"TestMod\cs_player_resource.h"
+			$File	"$SRCDIR\game\shared\TestMod\cs_player_shared.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\cs_playeranimstate.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\cs_playeranimstate.h"
+			$File	"TestMod\cs_playermove.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\cs_shareddefs.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\cs_shareddefs.h"
+			$File	"TestMod\cs_team.cpp"
+			$File	"TestMod\cs_team.h"
+			$File	"$SRCDIR\game\shared\TestMod\cs_usermessages.cpp"
+			$File	"TestMod\cs_vehicle_jeep.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\cs_weapon_parse.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\cs_weapon_parse.h"
+			$File	"$SRCDIR\game\shared\TestMod\flashbang_projectile.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\flashbang_projectile.h"
+			$File	"TestMod\func_bomb_target.cpp"
+			$File	"TestMod\func_bomb_target.h"
+			$File	"TestMod\func_buy_zone.cpp"
+			$File	"TestMod\func_hostage_rescue.cpp"
+			$File	"TestMod\funfact_cs.cpp"
+			$File	"TestMod\funfact_cs.h"
+			$File	"TestMod\funfactmgr_cs.cpp"
+			$File	"TestMod\funfactmgr_cs.h"
+			$File	"$SRCDIR\game\shared\TestMod\fx_cs_shared.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\fx_cs_shared.h"
+			$File	"$SRCDIR\game\shared\TestMod\hegrenade_projectile.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\hegrenade_projectile.h"
+			$File	"TestMod\info_view_parameters.cpp"
+			$File	"TestMod\item_ammo.cpp"
+			$File	"TestMod\item_assaultsuit.cpp"
+			$File	"TestMod\item_defuser.cpp"
+			$File	"TestMod\item_kevlar.cpp"
+			$File	"TestMod\item_nvgs.cpp"
+			$File	"TestMod\mapinfo.cpp"
+			$File	"TestMod\mapinfo.h"
+			$File	"TestMod\point_surroundtest.cpp"
+			$File	"TestMod\smokegrenade_projectile.cpp"
+			$File	"TestMod\smokegrenade_projectile.h"
+			$File	"TestMod\te_radioicon.cpp"
+			$File	"TestMod\te_shotgun_shot.cpp"
+			$File	"TestMod\te_shotgun_shot.h"
+			$File	"TestMod\holiday_gift.cpp"
+			$File	"TestMod\holiday_gift.h"
+			
+			$File	"$SRCDIR\game\shared\TestMod\cs_urlretrieveprices.cpp"
+			{
+				$Configuration
+				{
+					$Compiler
+					{
+						$Create/UsePrecompiledHeader	"Not Using Precompiled Headers"
+					}
+				}
+			}
+
+			$File	"$SRCDIR\game\shared\TestMod\cs_urlretrieveprices.h"
+			
+			$Folder	"Weapon"
+			{
+				$File	"$SRCDIR\game\shared\TestMod\weapon_ak47.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_aug.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_awp.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_basecsgrenade.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_basecsgrenade.h"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_c4.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_c4.h"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_csbase.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_csbase.h"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_csbasegun.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_csbasegun.h"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_deagle.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_elite.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_famas.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_fiveseven.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_flashbang.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_flashbang.h"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_g3sg1.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_galil.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_glock.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_hegrenade.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_hegrenade.h"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_knife.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_m249.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_m3.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_m4a1.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_mac10.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_mp5navy.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_p228.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_p90.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_scout.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_sg550.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_sg552.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_smokegrenade.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_tmp.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_ump45.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_usp.cpp"
+				$File	"$SRCDIR\game\shared\TestMod\weapon_xm1014.cpp"
+			}
+			
+			$Folder	"Bot"
+			{
+				$File	"TestMod\bot\cs_bot.cpp"
+				$File	"TestMod\bot\cs_bot.h"
+				$File	"TestMod\bot\cs_bot_chatter.cpp"
+				$File	"TestMod\bot\cs_bot_chatter.h"
+				$File	"TestMod\bot\cs_bot_event.cpp"
+				$File	"TestMod\bot\cs_bot_event_bomb.cpp"
+				$File	"TestMod\bot\cs_bot_event_player.cpp"
+				$File	"TestMod\bot\cs_bot_event_weapon.cpp"
+				$File	"TestMod\bot\cs_bot_init.cpp"
+				$File	"TestMod\bot\cs_bot_listen.cpp"
+				$File	"TestMod\bot\cs_bot_manager.cpp"
+				$File	"TestMod\bot\cs_bot_manager.h"
+				$File	"TestMod\bot\cs_bot_nav.cpp"
+				$File	"TestMod\bot\cs_bot_pathfind.cpp"
+				$File	"TestMod\bot\cs_bot_radio.cpp"
+				$File	"TestMod\bot\cs_bot_statemachine.cpp"
+				$File	"TestMod\bot\cs_bot_update.cpp"
+				$File	"TestMod\bot\cs_bot_vision.cpp"
+				$File	"TestMod\bot\cs_bot_weapon.cpp"
+				$File	"TestMod\bot\cs_bot_weapon_id.cpp"
+				$File	"TestMod\bot\cs_gamestate.cpp"
+				$File	"TestMod\bot\cs_gamestate.h"
+
+				$Folder	"States"
+				{
+					$File	"TestMod\bot\states\cs_bot_attack.cpp"
+					$File	"TestMod\bot\states\cs_bot_buy.cpp"
+					$File	"TestMod\bot\states\cs_bot_defuse_bomb.cpp"
+					$File	"TestMod\bot\states\cs_bot_escape_from_bomb.cpp"
+					$File	"TestMod\bot\states\cs_bot_fetch_bomb.cpp"
+					$File	"TestMod\bot\states\cs_bot_follow.cpp"
+					$File	"TestMod\bot\states\cs_bot_hide.cpp"
+					$File	"TestMod\bot\states\cs_bot_hunt.cpp"
+					$File	"TestMod\bot\states\cs_bot_idle.cpp"
+					$File	"TestMod\bot\states\cs_bot_investigate_noise.cpp"
+					$File	"TestMod\bot\states\cs_bot_move_to.cpp"
+					$File	"TestMod\bot\states\cs_bot_open_door.cpp"
+					$File	"TestMod\bot\states\cs_bot_plant_bomb.cpp"
+					$File	"TestMod\bot\states\cs_bot_use_entity.cpp"
+				}
+
+				$Folder	"Shared"
+				{
+					$File	"$SRCDIR\game\shared\TestMod\bot\bot.cpp"
+					$File	"$SRCDIR\game\shared\TestMod\bot\bot.h"
+					$File	"$SRCDIR\game\shared\TestMod\bot\bot_constants.h"
+					$File	"$SRCDIR\game\shared\TestMod\bot\bot_hide.cpp"
+					$File	"$SRCDIR\game\shared\TestMod\bot\bot_manager.cpp"
+					$File	"$SRCDIR\game\shared\TestMod\bot\bot_manager.h"
+					$File	"$SRCDIR\game\shared\TestMod\bot\bot_profile.cpp"
+					$File	"$SRCDIR\game\shared\TestMod\bot\bot_profile.h"
+					$File	"$SRCDIR\game\shared\TestMod\bot\bot_util.cpp"
+					$File	"$SRCDIR\game\shared\TestMod\bot\bot_util.h"
+					$File	"$SRCDIR\game\shared\TestMod\bot\shared_util.cpp"
+					$File	"$SRCDIR\game\shared\TestMod\bot\shared_util.h"
+				}
+			}
+
+			$Folder	"Hostage"
+			{
+				$File	"TestMod\hostage\cs_simple_hostage.cpp"
+				$File	"TestMod\hostage\cs_simple_hostage.h"
+			}
+			
+			$Folder	"Navigation Mesh"
+			{
+				$File	"TestMod\cs_nav.h"
+				$File	"TestMod\cs_nav_area.cpp"
+				$File	"TestMod\cs_nav_area.h"
+				$File	"TestMod\cs_nav_generate.cpp"
+				$File	"TestMod\cs_nav_mesh.cpp"
+				$File	"TestMod\cs_nav_mesh.h"
+				$File	"TestMod\cs_nav_pathfind.h"
+				$File	"TestMod\cs_nav_path.cpp"
+				$File	"TestMod\cs_nav_path.h"
+			}
+		}
+
+		$Folder "NextBot"
+		{
+			$File	"NextBot\NextBot.cpp"
+			$File	"NextBot\NextBot.h"
+			$File	"NextBot\NextBotBehavior.h"
+			$File	"NextBot\NextBotManager.cpp"
+			$File	"NextBot\NextBotManager.h"
+			$File	"NextBot\NextBotUtil.h"
+			$File	"NextBot\NextBotKnownEntity.h"
+			$File	"NextBot\NextBotGroundLocomotion.cpp"
+			$File	"NextBot\NextBotGroundLocomotion.h"
+			$File	"NextBot\simple_bot.cpp"
+			$File	"NextBot\simple_bot.h"
+
+			$Folder "NextBotInterfaces"
+			{
+				$File	"NextBot\NextBotBodyInterface.cpp"
+				$File	"NextBot\NextBotBodyInterface.h"
+				$File	"NextBot\NextBotComponentInterface.cpp"
+				$File	"NextBot\NextBotComponentInterface.h"
+				$File	"NextBot\NextBotEventResponderInterface.h"
+				$File	"NextBot\NextBotHearingInterface.h"
+				$File	"NextBot\NextBotIntentionInterface.cpp"
+				$File	"NextBot\NextBotIntentionInterface.h"
+				$File	"NextBot\NextBotInterface.cpp"
+				$File	"NextBot\NextBotInterface.h"
+				$File	"NextBot\NextBotLocomotionInterface.cpp"
+				$File	"NextBot\NextBotLocomotionInterface.h"
+				$File	"NextBot\NextBotVisionInterface.cpp"
+				$File	"NextBot\NextBotVisionInterface.h"
+				$File	"NextBot\NextBotContextualQueryInterface.h"
+			}
+
+			$Folder "NextBotPath"
+			{
+				$File	"NextBot\Path\NextBotChasePath.cpp"
+				$File	"NextBot\Path\NextBotChasePath.h"
+				$File	"NextBot\Path\NextBotRetreatPath.h"
+				$File	"NextBot\Path\NextBotPath.cpp"
+				$File	"NextBot\Path\NextBotPath.h"
+				$File	"NextBot\Path\NextBotPathFollow.cpp"
+				$File	"NextBot\Path\NextBotPathFollow.h"
+			}
+			
+			$Folder "NextBotPlayer"
+			{
+				$File	"NextBot\Player\NextBotPlayerBody.cpp"
+				$File	"NextBot\Player\NextBotPlayerBody.h"
+				$File	"NextBot\Player\NextBotPlayerLocomotion.cpp"
+				$File	"NextBot\Player\NextBotPlayerLocomotion.h"
+				$File	"NextBot\Player\NextBotPlayer.cpp"
+				$File	"NextBot\Player\NextBotPlayer.h"
+			}
+
+			$Folder "NextBotCommonBehaviors"
+			{
+				$File	"NextBot\Behavior\BehaviorBackUp.h"
+				$File	"NextBot\Behavior\BehaviorMoveTo.h"
+			}
+
+			$Folder "NextBotNavMeshEntities"
+			{
+				$File	"NextBot\NavMeshEntities\func_nav_prerequisite.cpp"
+				$File	"NextBot\NavMeshEntities\func_nav_prerequisite.h"
+			}
+		}
+	}
+}

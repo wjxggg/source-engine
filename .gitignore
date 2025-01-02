@@ -37,3 +37,8 @@ waf3*/
 .vscode/
 .depproj/
 source-engine.sln
+source-engine.VC.db
+source-engine.unsuccessfulbuild
+source-engine.lastbuildstate
+
+/TestMod

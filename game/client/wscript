@@ -18,7 +18,7 @@ games = {
 	'episodic': ['client_base.vpc', 'client_episodic.vpc'],
 	'portal': ['client_base.vpc', 'client_portal.vpc'],
 	'hl1mp': ['client_base.vpc', 'client_hl1mp.vpc'],
-	'cstrike': ['client_base.vpc', 'client_cstrike.vpc'],
+	'TestMod': ['client_base.vpc', 'client_TestMod.vpc'],
 	'dod': ['client_base.vpc', 'client_dod.vpc']
 }
 

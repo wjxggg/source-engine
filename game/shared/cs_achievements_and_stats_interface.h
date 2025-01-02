@@ -17,7 +17,7 @@
 #include "vgui_controls/MessageDialog.h"
 
 #include "cs_gamestats_shared.h"
-#include "../client/cstrike/VGUI/achievement_stats_summary.h"
+#include "VGUI/achievement_stats_summary.h"
 #include "vgui/IInput.h"
 #include "vgui/ILocalize.h"
 #include "vgui/IPanel.h"

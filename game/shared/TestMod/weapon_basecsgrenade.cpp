@@ -23,7 +23,7 @@
 
 	#include "cs_player.h"
 	#include "items.h"
-	#include "../../server/cstrike/cs_gamestats.h"
+	#include "cs_gamestats.h"
 
 #endif
 

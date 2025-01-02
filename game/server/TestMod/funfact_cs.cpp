@@ -4,7 +4,7 @@
 #include "cs_gamestats.h"
 #include "funfactmgr_cs.h"
 #include "funfact_cs.h"
-#include "../../game/shared/cstrike/weapon_csbase.h"
+#include "weapon_csbase.h"
 #include "cs_achievement_constants.h"
 
 #define FIRST_BLOOD_TIME				45.0f

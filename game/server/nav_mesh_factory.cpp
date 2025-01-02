@@ -21,7 +21,7 @@
 #endif
 
 #ifdef CSTRIKE_DLL
-#include "cstrike/cs_nav_mesh.h"
+#include "cs_nav_mesh.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!

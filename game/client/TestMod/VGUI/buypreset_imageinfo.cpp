@@ -24,7 +24,7 @@
 #include "buypreset_listbox.h"
 #include "buypreset_weaponsetlabel.h"
 
-#include "cstrike/bot/shared_util.h"
+#include "bot/shared_util.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

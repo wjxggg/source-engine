@@ -55,7 +55,7 @@
 #include "cs_gamestats.h"
 #include "gamestats.h"
 #include "holiday_gift.h"
-#include "../../shared/cstrike/cs_achievement_constants.h"
+#include "cs_achievement_constants.h"
 
 //=============================================================================
 // HPE_BEGIN
@@ -65,7 +65,7 @@
 #include "cs_simple_hostage.h"
 
 // [dwenger] Needed for weapon type used tracking
-#include "../../shared/cstrike/cs_weapon_parse.h"
+#include "cs_weapon_parse.h"
 
 #define REPORT_PLAYER_DAMAGE 0
 

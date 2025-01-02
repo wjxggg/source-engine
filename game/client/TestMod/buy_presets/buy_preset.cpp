@@ -11,7 +11,7 @@
 #include "weapon_csbase.h"
 #include "cs_ammodef.h"
 #include "cs_gamerules.h"
-#include "cstrike/bot/shared_util.h"
+#include "bot/shared_util.h"
 #include "vgui/ILocalize.h"
 #include <vgui_controls/Controls.h>
 

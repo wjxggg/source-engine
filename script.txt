@@ -1,0 +1,5 @@
+./waf configure -T release --32bits --prefix=TestMod --build-games=TestMod --disable-warns
+./waf build -p -v
+./waf install
+./waf distclean
+./waf msvs

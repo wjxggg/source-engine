@@ -17,7 +17,7 @@
 #include "weapon_csbase.h"
 #include "props.h"
 #include "cs_achievement_constants.h"
-#include "../../shared/cstrike/weapon_c4.h"
+#include "weapon_c4.h"
 
 #include <time.h>
 #include "filesystem.h"
