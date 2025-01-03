@@ -981,13 +981,17 @@ void CCSPlayer::GiveDefaultItems()
 	{
 		GiveNamedItem( "weapon_knife" );
 		GiveNamedItem( "weapon_usp" );
-		GiveAmmo( 24, BULLET_PLAYER_45ACP );
+		GiveNamedItem("weapon_ak47");
+		GiveAmmo( 10000, BULLET_PLAYER_45ACP );
+		GiveAmmo(10000, BULLET_PLAYER_762MM);
 	}
 	else if ( GetTeamNumber() == TEAM_TERRORIST )
 	{
 		GiveNamedItem( "weapon_knife" );
-		GiveNamedItem( "weapon_glock" );
-		GiveAmmo( 40, BULLET_PLAYER_9MM );
+		GiveNamedItem( "weapon_usp" );
+		GiveNamedItem("weapon_ak47");
+		GiveAmmo( 10000, BULLET_PLAYER_45ACP);
+		GiveAmmo( 10000, BULLET_PLAYER_762MM);
 	}
 }
 
