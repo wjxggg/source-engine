@@ -224,14 +224,6 @@ void FX_FireBullets(
 			flRangeModifier = 0.9f;
 		}
 	}
-	else if ( iWeaponID == WEAPON_M4A1 )
-	{
-		if ( iMode == Secondary_Mode )
-		{
-			flRangeModifier = 0.95f; // slower bullets in silenced mode
-			sound_type = SPECIAL1;
-		}
-	}
 	else if ( iWeaponID == WEAPON_USP )
 	{
 		if ( iMode == Secondary_Mode )
