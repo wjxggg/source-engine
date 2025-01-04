@@ -1,0 +1,3 @@
+make a physics model
+make IVEngineClient::SolidMoved and IVEngineClient::TriggerMoved interface, then enable it in baseentity_shared.cpp
+migrate c_triggers.cpp, enable TouchTriggerSoundOperator(C_BaseEntity *pEntity) in c_baseplayer.cpp

@@ -65,6 +65,7 @@ ConVar hl2_episodic( "hl2_episodic", "0", FCVAR_REPLICATED );
 #endif
 
 bool CBaseEntity::m_bAllowPrecache = false;
+bool CBaseEntity::sm_bAccurateTriggerBboxChecks = true;	// set to false for legacy behavior in ep1
 
 // Set default max values for entities based on the existing constants from elsewhere
 float k_flMaxEntityPosCoord = MAX_COORD_FLOAT;
@@ -2564,3 +2565,50 @@ bool CBaseEntity::IsToolRecording() const
 #endif
 }
 #endif
+
+void CBaseEntity::PhysicsTouchTriggers(const Vector *pPrevAbsOrigin)
+{
+#if defined( CLIENT_DLL )
+#if defined( FAST_TRIGGER_TOUCH )
+	{
+		Assert(!pPrevAbsOrigin);
+		TouchTriggerPlayerMovement(this);
+		return;
+	}
+#endif // FAST_TRIGGER_TOUCH
+	IClientEntity *pEntity = this;
+#else
+	edict_t *pEntity = edict();
+#endif
+
+	if (pEntity && !IsWorld())
+	{
+		Assert(CollisionProp());
+		bool isTriggerCheckSolids = IsSolidFlagSet(FSOLID_TRIGGER);
+		bool isSolidCheckTriggers = IsSolid() && !isTriggerCheckSolids;		// NOTE: Moving triggers (items, ammo etc) are not 
+		// checked against other triggers ot reduce the number of touchlinks created
+		if (!(isSolidCheckTriggers || isTriggerCheckSolids))
+			return;
+
+		if (GetSolid() == SOLID_BSP)
+		{
+			if (!GetModel() && Q_strlen(STRING(GetModelName())) == 0)
+			{
+				Warning("Inserted %s with no model\n", GetClassname());
+				return;
+			}
+		}
+
+		SetCheckUntouch(true);
+		#ifndef CLIENT_DLL // IVEngineClient dont have this interface yet
+		if (isSolidCheckTriggers)
+		{
+			engine->SolidMoved(pEntity, CollisionProp(), pPrevAbsOrigin, sm_bAccurateTriggerBboxChecks);
+		}
+		if (isTriggerCheckSolids)
+		{
+			engine->TriggerMoved(pEntity, sm_bAccurateTriggerBboxChecks);
+		}
+		#endif
+	}
+}

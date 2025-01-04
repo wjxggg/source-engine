@@ -448,6 +448,8 @@ public:
 	virtual void			SetStepSoundTime( stepsoundtimes_t iStepSoundTime, bool bWalking );
 	virtual void			DeathSound( const CTakeDamageInfo &info );
 	virtual const char*		GetSceneSoundToken( void ) { return ""; }
+	const Vector &			GetMovementCollisionNormal(void) const;	// return the normal of the surface we last collided with
+	const Vector &			GetGroundNormal(void) const;
 
 	virtual void			OnEmitFootstepSound( const CSoundParameters& params, const Vector& vecOrigin, float fVolume ) {}
 
@@ -1205,6 +1207,10 @@ private:
 	CUtlLinkedList< CPlayerSimInfo >  m_vecPlayerSimInfo;
 	CUtlLinkedList< CPlayerCmdInfo >  m_vecPlayerCmdInfo;
 
+	friend class CMoveHelperServer;
+	Vector m_movementCollisionNormal;
+	Vector m_groundNormal;
+
 	IntervalTimer m_weaponFiredTimer;
 
 	// Store the last time we successfully processed a usercommand
@@ -1224,6 +1230,16 @@ EXTERN_SEND_TABLE(DT_BasePlayer)
 //-----------------------------------------------------------------------------
 // Inline methods
 //-----------------------------------------------------------------------------
+inline const Vector &CBasePlayer::GetMovementCollisionNormal(void) const
+{
+	return m_movementCollisionNormal;
+}
+
+inline const Vector &CBasePlayer::GetGroundNormal(void) const
+{
+	return m_groundNormal;
+}
+
 inline bool CBasePlayer::IsBotOfType( int botType ) const
 {
 	// bot type of zero is invalid

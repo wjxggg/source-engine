@@ -83,7 +83,6 @@ edict_t *g_pForceAttachEdict = NULL;
 bool CBaseEntity::m_bDebugPause = false;		// Whether entity i/o is paused.
 int CBaseEntity::m_nDebugSteps = 1;				// Number of entity outputs to fire before pausing again.
 bool CBaseEntity::sm_bDisableTouchFuncs = false;	// Disables PhysicsTouch and PhysicsStartTouch function calls
-bool CBaseEntity::sm_bAccurateTriggerBboxChecks = true;	// set to false for legacy behavior in ep1
 
 int CBaseEntity::m_nPredictionRandomSeed = -1;
 CBasePlayer *CBaseEntity::m_pPredictionPlayer = NULL;
@@ -2591,39 +2590,6 @@ void CBaseEntity::PhysicsRelinkChildren( float dt )
 		if ( child->FirstMoveChild() )
 		{
 			child->PhysicsRelinkChildren(dt);
-		}
-	}
-}
-
-void CBaseEntity::PhysicsTouchTriggers( const Vector *pPrevAbsOrigin )
-{
-	edict_t *pEdict = edict();
-	if ( pEdict && !IsWorld() )
-	{
-		Assert(CollisionProp());
-		bool isTriggerCheckSolids = IsSolidFlagSet( FSOLID_TRIGGER );
-		bool isSolidCheckTriggers = IsSolid() && !isTriggerCheckSolids;		// NOTE: Moving triggers (items, ammo etc) are not 
-																			// checked against other triggers to reduce the number of touchlinks created
-		if ( !(isSolidCheckTriggers || isTriggerCheckSolids) )
-			return;
-
-		if ( GetSolid() == SOLID_BSP ) 
-		{
-			if ( !GetModel() && Q_strlen( STRING( GetModelName() ) ) == 0 ) 
-			{
-				Warning( "Inserted %s with no model\n", GetClassname() );
-				return;
-			}
-		}
-
-		SetCheckUntouch( true );
-		if ( isSolidCheckTriggers )
-		{
-			engine->SolidMoved( pEdict, CollisionProp(), pPrevAbsOrigin, sm_bAccurateTriggerBboxChecks );
-		}
-		if ( isTriggerCheckSolids )
-		{
-			engine->TriggerMoved( pEdict, sm_bAccurateTriggerBboxChecks );
 		}
 	}
 }

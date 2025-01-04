@@ -620,6 +620,8 @@ CBasePlayer::CBasePlayer( )
 	m_bDuckToggled = false;
 	m_bPhysicsWasFrozen = false;
 
+	m_movementCollisionNormal = Vector(0, 0, 1);
+
 	// Used to mask off buttons
 	m_afButtonDisabled = 0;
 	m_afButtonForced = 0;
@@ -5040,6 +5042,8 @@ void CBasePlayer::Spawn( void )
 
 	// Calculate this immediately
 	m_nVehicleViewSavedFrame = 0;
+
+	m_movementCollisionNormal = Vector(0, 0, 1);
 
 	// track where we are in the nav mesh
 	UpdateLastKnownArea();

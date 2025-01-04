@@ -242,6 +242,7 @@ public:
 
 	virtual void				PhysicsSimulate( void );
 	virtual unsigned int	PhysicsSolidMaskForEntity( void ) const { return MASK_PLAYERSOLID; }
+	void						PhysicsTouchTriggers(const Vector *pPrevAbsOrigin = NULL); // prediction calls it on C_BasePlayer object
 
 	// Prediction stuff
 	virtual bool				ShouldPredict( void );

@@ -627,6 +627,9 @@ public:
 
 	static bool IsSimulatingOnAlternateTicks();
 
+public:
+	static bool	sm_bAccurateTriggerBboxChecks;	// SOLID_BBOX entities do a fully accurate trigger vs bbox check when this is set
+
 // C_BaseEntity local functions
 public:
 
@@ -922,6 +925,7 @@ public:
 	void					PhysicsImpact( C_BaseEntity *other, trace_t &trace );
  	void					PhysicsMarkEntitiesAsTouching( C_BaseEntity *other, trace_t &trace );
 	void					PhysicsMarkEntitiesAsTouchingEventDriven( C_BaseEntity *other, trace_t &trace );
+	void					PhysicsTouchTriggers(const Vector *pPrevAbsOrigin = NULL);
 
 	// Physics helper
 	static void				PhysicsRemoveTouchedList( C_BaseEntity *ent );

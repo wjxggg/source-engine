@@ -1482,6 +1482,8 @@ bool CPrediction::PerformPrediction( bool received_new_world_update, C_BasePlaye
 
 	m_bInPrediction = true;
 
+	localPlayer->PhysicsTouchTriggers();
+
 	// undo interpolation changes for entities we stand on
 	C_BaseEntity *entity = localPlayer->GetGroundEntity();
 
