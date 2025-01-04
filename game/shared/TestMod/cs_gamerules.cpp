@@ -359,7 +359,7 @@ ConVar cl_autohelp(
 
 	ConVar mp_freezetime( 
 		"mp_freezetime",
-		"6",
+		"3",
 		FCVAR_REPLICATED | FCVAR_NOTIFY,
 		"how many seconds to keep players frozen when the round starts",
 		true, 0,	// min value
