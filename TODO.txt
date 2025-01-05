@@ -1,4 +1,6 @@
-learn hl2mp how to deal with physics
+fix projectile spawn position
+migrate stunstick from hl2mp
+fix player stuck on object
 update gamemovement
 make a physics model
 make IVEngineClient::SolidMoved and IVEngineClient::TriggerMoved interface, then enable it in baseentity_shared.cpp

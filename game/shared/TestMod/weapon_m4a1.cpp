@@ -7,9 +7,8 @@
 #include "cbase.h"
 #include "weapon_csbase.h"
 #include "fx_cs_shared.h"
-#ifndef CLIENT_DLL
-	#include "func_break.h"
-#endif
+#include "datacache/imdlcache.h"
+#include "props.h"
 
 #if defined( CLIENT_DLL )
 
@@ -22,8 +21,8 @@
 
 #endif
 
-//#define BULLET_MODEL "models/bullets/cube.mdl"
-#define BULLET_MODEL "models/props_junk/wood_crate001a.mdl"
+#define PROJECTILE_MODEL "models/props_junk/wood_crate001a.mdl"
+#define SHOOT_POSITION_OFFSET_FORWARD 200
 
 class CWeaponM4A1 : public CWeaponCSBase
 {
@@ -74,7 +73,7 @@ void CWeaponM4A1::Precache(void)
 {
 	BaseClass::Precache();
 
-	PrecacheModel(BULLET_MODEL);
+	PrecacheModel(PROJECTILE_MODEL);
 }
 
 float CWeaponM4A1::GetInaccuracy() const
@@ -111,48 +110,74 @@ void CWeaponM4A1::PrimaryAttack()
 		GetSpread(),
 		gpGlobals->curtime);
 
-	#ifndef CLIENT_DLL
-
-	bool allowPrecache = CBaseEntity::IsPrecacheAllowed();
-	CBaseEntity::SetAllowPrecache(true);
-
-	// Try to create entity
-	CBaseEntity *entity = dynamic_cast<CBaseEntity *>(CreateEntityByName("prop_physics"));
-	if (entity)
-	{
-		entity->Precache();
-
-		// Pass in any additional parameters.
-		entity->KeyValue("model", BULLET_MODEL);
-
-		entity->SetName(AllocPooledString(BULLET_MODEL));
-
-		DispatchSpawn(entity);
-
-		// Now attempt to drop into the world
-		trace_t tr;
-		Vector forward;
-		pPlayer->EyeVectors(&forward);
-		UTIL_TraceLine(pPlayer->Weapon_ShootPosition(),
-			pPlayer->Weapon_ShootPosition() + forward * 200, MASK_SOLID,
-			pPlayer, COLLISION_GROUP_NONE, &tr);
-		//if (tr.fraction != 1.0)
-		//{
-			// Raise the end position a little up off the floor, place the npc and drop him down
-			tr.endpos.z += 12;
-			entity->Teleport(&tr.endpos, NULL, NULL);
-			UTIL_DropToFloor(entity, MASK_SOLID);
-		//}
-
-		entity->Activate();
-	}
-	CBaseEntity::SetAllowPrecache(allowPrecache);
-
-	#endif
-
 	m_flNextPrimaryAttack = gpGlobals->curtime + m_flCycleTime;
 
 	SendWeaponAnim(ACT_VM_PRIMARYATTACK);
+
+	#ifndef CLIENT_DLL
+
+	MDLCACHE_CRITICAL_SECTION();
+
+	MDLHandle_t h = mdlcache->FindMDL(PROJECTILE_MODEL);
+	if (h == MDLHANDLE_INVALID)
+		return;
+
+	// Must have vphysics to place as a physics prop
+	studiohdr_t *pStudioHdr = mdlcache->GetStudioHdr(h);
+	if (!pStudioHdr)
+		return;
+
+	// Must have vphysics to place as a physics prop
+	if (!mdlcache->GetVCollide(h))
+		return;
+
+	QAngle angles(0.0f, 0.0f, 0.0f);
+	Vector vecSweepMins = pStudioHdr->hull_min;
+	Vector vecSweepMaxs = pStudioHdr->hull_max;
+
+	Vector forward;
+	pPlayer->EyeVectors(&forward);
+
+	Vector vTraceStart, vTraceEnd;
+	vTraceStart = pPlayer->Weapon_ShootPosition();
+	vTraceEnd = pPlayer->Weapon_ShootPosition() + forward * SHOOT_POSITION_OFFSET_FORWARD;
+
+	trace_t tr;
+	UTIL_TraceHull(vTraceStart, vTraceEnd,
+		vecSweepMins, vecSweepMaxs, MASK_NPCSOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
+
+	// No space?
+	if (tr.allsolid)
+		return;
+
+	VectorMA(tr.endpos, 1.0f, tr.plane.normal, tr.endpos);
+
+	bool bAllowPrecache = CBaseEntity::IsPrecacheAllowed();
+	CBaseEntity::SetAllowPrecache(true);
+
+	// Try to create entity
+	CPhysicsProp *pProp = dynamic_cast<CPhysicsProp *>(CreateEntityByName("physics_prop"));
+	if (pProp)
+	{
+		char buf[512];
+		// Pass in standard key values
+		Q_snprintf(buf, sizeof(buf), "%.10f %.10f %.10f", tr.endpos.x, tr.endpos.y, tr.endpos.z);
+		pProp->KeyValue("origin", buf);
+		Q_snprintf(buf, sizeof(buf), "%.10f %.10f %.10f", angles.x, angles.y, angles.z);
+		pProp->KeyValue("angles", buf);
+		pProp->KeyValue("model", PROJECTILE_MODEL);
+		pProp->KeyValue("fademindist", "-1");
+		pProp->KeyValue("fademaxdist", "0");
+		pProp->KeyValue("fadescale", "1");
+		pProp->KeyValue("inertiaScale", "1.0");
+		pProp->KeyValue("physdamagescale", "0.1");
+		pProp->Precache();
+		DispatchSpawn(pProp);
+		pProp->Activate();
+	}
+	CBaseEntity::SetAllowPrecache(bAllowPrecache);
+
+	#endif
 
 	// CSBaseGunFire can kill us, forcing us to drop our weapon, if we shoot something that explodes
 	pPlayer = GetPlayerOwner();
