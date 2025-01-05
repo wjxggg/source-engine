@@ -67,8 +67,6 @@ void CCSPlayerMove::StartCommand( CBasePlayer *player, CUserCmd *cmd )
 //-----------------------------------------------------------------------------
 void CCSPlayerMove::SetupMove( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper *pHelper, CMoveData *move )
 {
-	player->AvoidPhysicsProps( ucmd );
-
 	BaseClass::SetupMove( player, ucmd, pHelper, move );
 
 	IServerVehicle *pVehicle = player->GetVehicle();

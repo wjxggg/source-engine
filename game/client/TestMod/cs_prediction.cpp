@@ -29,8 +29,6 @@ public:
 void CCSPrediction::SetupMove( C_BasePlayer *player, CUserCmd *ucmd, IMoveHelper *pHelper, 
 	CMoveData *move )
 {
-	player->AvoidPhysicsProps( ucmd );
-
 	// Call the default SetupMove code.
 	BaseClass::SetupMove( player, ucmd, pHelper, move );
 }
