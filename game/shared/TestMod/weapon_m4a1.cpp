@@ -23,7 +23,7 @@
 #endif
 
 //#define BULLET_MODEL "models/bullets/cube.mdl"
-#define BULLET_MODEL "models/props_c17/oildrum001.mdl"
+#define BULLET_MODEL "models/props_junk/wood_crate001a.mdl"
 
 class CWeaponM4A1 : public CWeaponCSBase
 {
@@ -112,34 +112,41 @@ void CWeaponM4A1::PrimaryAttack()
 		gpGlobals->curtime);
 
 	#ifndef CLIENT_DLL
-		
-	Vector forward, offset;
-	pPlayer->EyeVectors(&forward);
-	offset = forward * 60;
 
-	CBaseEntity *pEntity = CBaseEntity::CreateNoSpawn("prop_physics_multiplayer", pPlayer->Weapon_ShootPosition() + offset, pPlayer->EyeAngles(), pPlayer);
+	bool allowPrecache = CBaseEntity::IsPrecacheAllowed();
+	CBaseEntity::SetAllowPrecache(true);
 
-	//pEntity->AddSpawnFlags(pPlayer->GetSpawnFlags());
+	// Try to create entity
+	CBaseEntity *entity = dynamic_cast<CBaseEntity *>(CreateEntityByName("prop_physics"));
+	if (entity)
+	{
+		entity->Precache();
 
-	// We never want to be motion disabled
-	//pEntity->RemoveSpawnFlags(SF_PHYSPROP_MOTIONDISABLED);
-	// Inherit the base object's damage modifiers
-	//pEntity->SetDmgModBullet(100);
-	//pEntity->SetDmgModClub(100);
-	//pEntity->SetDmgModExplosive(100);
+		// Pass in any additional parameters.
+		entity->KeyValue("model", BULLET_MODEL);
 
-	pEntity->SetModelName(AllocPooledString(BULLET_MODEL));
-	pEntity->SetModel(STRING(pEntity->GetModelName()));
-	pEntity->SetCollisionGroup(COLLISION_GROUP_NONE);
+		entity->SetName(AllocPooledString(BULLET_MODEL));
 
-	pEntity->SetSolid(SOLID_BBOX);
-	pEntity->AddSolidFlags(FSOLID_NOT_SOLID);
+		DispatchSpawn(entity);
 
-	//pEntity->SetFadeDistance(fadeMinDist, fadeMaxDist);
+		// Now attempt to drop into the world
+		trace_t tr;
+		Vector forward;
+		pPlayer->EyeVectors(&forward);
+		UTIL_TraceLine(pPlayer->Weapon_ShootPosition(),
+			pPlayer->Weapon_ShootPosition() + forward * 200, MASK_SOLID,
+			pPlayer, COLLISION_GROUP_NONE, &tr);
+		//if (tr.fraction != 1.0)
+		//{
+			// Raise the end position a little up off the floor, place the npc and drop him down
+			tr.endpos.z += 12;
+			entity->Teleport(&tr.endpos, NULL, NULL);
+			UTIL_DropToFloor(entity, MASK_SOLID);
+		//}
 
-	//pEntity->AddSpawnFlags(SF_PHYSPROP_IS_GIB);
-
-	pEntity->Spawn();
+		entity->Activate();
+	}
+	CBaseEntity::SetAllowPrecache(allowPrecache);
 
 	#endif
 
