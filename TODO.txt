@@ -1,4 +1,8 @@
 fix projectile spawn position
+如果是地面30度，生成在终点上方
+如果是天花板30度，生成在终点下方
+如果是墙壁，生成在玩家方向
+如果未击中，从终点到起点，寻找生成空间
 migrate stunstick from hl2mp
 fix player stuck on object
 update gamemovement

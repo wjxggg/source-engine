@@ -7,8 +7,6 @@
 #include "cbase.h"
 #include "weapon_csbase.h"
 #include "fx_cs_shared.h"
-#include "datacache/imdlcache.h"
-#include "props.h"
 
 #if defined( CLIENT_DLL )
 
@@ -19,10 +17,11 @@
 
 	#include "cs_player.h"
 
-#endif
+	#include "datacache/imdlcache.h"
+	#include "props.h"
+	#include "projectile.h"
 
-#define PROJECTILE_MODEL "models/props_junk/wood_crate001a.mdl"
-#define SHOOT_POSITION_OFFSET_FORWARD 200
+#endif
 
 class CWeaponM4A1 : public CWeaponCSBase
 {
@@ -36,12 +35,13 @@ public:
 	virtual void Precache(void);
 
 	virtual void PrimaryAttack();
+	virtual void SecondaryAttack();
 
  	virtual float GetInaccuracy() const;
 	virtual float GetSpread() const;
 
 	virtual CSWeaponID GetWeaponID( void ) const		{ return WEAPON_M4A1; }
-	virtual int GetSlot(void) const { return WEAPON_SLOT_PISTOL; }
+	virtual int GetSlot(void) const { return WEAPON_SLOT_RIFLE; }
 
 private:
 	CWeaponM4A1( const CWeaponM4A1 & );
@@ -72,8 +72,6 @@ CWeaponM4A1::CWeaponM4A1()
 void CWeaponM4A1::Precache(void)
 {
 	BaseClass::Precache();
-
-	PrecacheModel(PROJECTILE_MODEL);
 }
 
 float CWeaponM4A1::GetInaccuracy() const
@@ -94,7 +92,7 @@ void CWeaponM4A1::PrimaryAttack()
 
 	pPlayer->m_iShotsFired++;
 
-	m_iClip1--;
+	//m_iClip1--;
 
 	// player "shoot" animation
 	pPlayer->SetAnimation(PLAYER_ATTACK1);
@@ -116,9 +114,61 @@ void CWeaponM4A1::PrimaryAttack()
 
 	#ifndef CLIENT_DLL
 
+	Vector forward;
+	pPlayer->EyeVectors(&forward);
+
+	trace_t tr;
+	UTIL_TraceLine(pPlayer->Weapon_ShootPosition(),
+		pPlayer->Weapon_ShootPosition() + forward * MAX_TRACE_LENGTH, MASK_NPCSOLID,
+		pPlayer, COLLISION_GROUP_NONE, &tr);
+	CProjectile *pProp = dynamic_cast<CProjectile *>(tr.m_pEnt);
+	if (pProp)
+	{
+		Msg("Hit CPropjectile: %s\n", pProp->GetModelName());
+		pProp->SetPhysicsActive(!pProp->IsPhysicsActive());
+	}
+
+	#endif
+
+	// CSBaseGunFire can kill us, forcing us to drop our weapon, if we shoot something that explodes
+	pPlayer = GetPlayerOwner();
+	if (!pPlayer)
+		return;
+}
+
+void CWeaponM4A1::SecondaryAttack()
+{
+	CCSPlayer *pPlayer = GetPlayerOwner();
+	if (!pPlayer)
+		return;
+
+	pPlayer->m_iShotsFired++;
+
+	//m_iClip1--;
+
+	// player "shoot" animation
+	pPlayer->SetAnimation(PLAYER_ATTACK1);
+
+	FX_FireBullets(
+		pPlayer->entindex(),
+		pPlayer->Weapon_ShootPosition(),
+		pPlayer->EyeAngles() + 2.0f * pPlayer->GetPunchAngle(),
+		GetWeaponID(),
+		Primary_Mode,
+		CBaseEntity::GetPredictionRandomSeed() & 255, // wrap it for network traffic so it's the same between client and server
+		GetInaccuracy(),
+		GetSpread(),
+		gpGlobals->curtime);
+
+	m_flNextSecondaryAttack = gpGlobals->curtime + m_flCycleTime;
+
+	SendWeaponAnim(ACT_VM_PRIMARYATTACK);
+
+#ifndef CLIENT_DLL
+
 	MDLCACHE_CRITICAL_SECTION();
 
-	MDLHandle_t h = mdlcache->FindMDL(PROJECTILE_MODEL);
+	MDLHandle_t h = mdlcache->FindMDL(PROJECTILE_BLOCK);
 	if (h == MDLHANDLE_INVALID)
 		return;
 
@@ -143,8 +193,8 @@ void CWeaponM4A1::PrimaryAttack()
 	vTraceEnd = pPlayer->Weapon_ShootPosition() + forward * SHOOT_POSITION_OFFSET_FORWARD;
 
 	trace_t tr;
-	UTIL_TraceHull(vTraceStart, vTraceEnd,
-		vecSweepMins, vecSweepMaxs, MASK_NPCSOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
+	//UTIL_TraceHull(vTraceStart, vTraceEnd, vecSweepMins, vecSweepMaxs, MASK_NPCSOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(vTraceStart, vTraceEnd, MASK_NPCSOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
 
 	// No space?
 	if (tr.allsolid)
@@ -156,7 +206,7 @@ void CWeaponM4A1::PrimaryAttack()
 	CBaseEntity::SetAllowPrecache(true);
 
 	// Try to create entity
-	CPhysicsProp *pProp = dynamic_cast<CPhysicsProp *>(CreateEntityByName("physics_prop"));
+	CProjectile *pProp = dynamic_cast<CProjectile *>(CreateEntityByName("prop_projectile"));
 	if (pProp)
 	{
 		char buf[512];
@@ -165,19 +215,24 @@ void CWeaponM4A1::PrimaryAttack()
 		pProp->KeyValue("origin", buf);
 		Q_snprintf(buf, sizeof(buf), "%.10f %.10f %.10f", angles.x, angles.y, angles.z);
 		pProp->KeyValue("angles", buf);
-		pProp->KeyValue("model", PROJECTILE_MODEL);
+		pProp->KeyValue("model", PROJECTILE_BLOCK);
 		pProp->KeyValue("fademindist", "-1");
 		pProp->KeyValue("fademaxdist", "0");
 		pProp->KeyValue("fadescale", "1");
+		pProp->KeyValue("solid", "6");
 		pProp->KeyValue("inertiaScale", "1.0");
 		pProp->KeyValue("physdamagescale", "0.1");
+
 		pProp->Precache();
 		DispatchSpawn(pProp);
+
+		pProp->SetPhysicsActive(false);
+
 		pProp->Activate();
 	}
 	CBaseEntity::SetAllowPrecache(bAllowPrecache);
 
-	#endif
+#endif
 
 	// CSBaseGunFire can kill us, forcing us to drop our weapon, if we shoot something that explodes
 	pPlayer = GetPlayerOwner();

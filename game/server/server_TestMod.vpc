@@ -113,6 +113,8 @@ $Project "Server (TestMod)"
 			$File	"TestMod\te_shotgun_shot.h"
 			$File	"TestMod\holiday_gift.cpp"
 			$File	"TestMod\holiday_gift.h"
+			$File	"$SRCDIR\game\shared\TestMod\projectile.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\projectile.h"
 			
 			$File	"$SRCDIR\game\shared\TestMod\cs_urlretrieveprices.cpp"
 			{
