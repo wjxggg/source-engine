@@ -223,12 +223,18 @@ void CWeaponM4A1::SecondaryAttack()
 		pProp->KeyValue("inertiaScale", "1.0");
 		pProp->KeyValue("physdamagescale", "0.1");
 
+		// must before Activate()
+		pProp->SetModelScale(0.625f);
+
 		pProp->Precache();
 		DispatchSpawn(pProp);
 
 		pProp->SetPhysicsActive(false);
 
 		pProp->Activate();
+
+		// must after Activate()
+		pProp->SetCollisionBoundsFromModel();
 	}
 	CBaseEntity::SetAllowPrecache(bAllowPrecache);
 

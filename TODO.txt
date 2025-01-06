@@ -1,3 +1,4 @@
+fix prediction issue with scaling
 fix projectile spawn position
 如果是地面30度，生成在终点上方
 如果是天花板30度，生成在终点下方
