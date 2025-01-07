@@ -817,6 +817,42 @@ void CPrediction::RunPostThink( C_BasePlayer *player )
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: Checks if the player is standing on a moving entity and adjusts velocity and 
+//  basevelocity appropriately
+// Input  : *player - 
+//			frametime - 
+//-----------------------------------------------------------------------------
+void CPrediction::CheckMovingGround(C_BasePlayer *player, double frametime)
+{
+	CBaseEntity	    *groundentity;
+
+	if (player->GetFlags() & FL_ONGROUND)
+	{
+		groundentity = player->GetGroundEntity();
+		if (groundentity && (groundentity->GetFlags() & FL_CONVEYOR))
+		{
+			Vector vecNewVelocity;
+			groundentity->GetGroundVelocityToApply(vecNewVelocity);
+			if (player->GetFlags() & FL_BASEVELOCITY)
+			{
+				vecNewVelocity += player->GetBaseVelocity();
+			}
+			player->SetBaseVelocity(vecNewVelocity);
+			player->AddFlag(FL_BASEVELOCITY);
+		}
+	}
+
+	if (!(player->GetFlags() & FL_BASEVELOCITY))
+	{
+		// Apply momentum (add in half of the previous frame of velocity first)
+		player->ApplyAbsVelocityImpulse((1.0 + (frametime * 0.5)) * player->GetBaseVelocity());
+		player->SetBaseVelocity(vec3_origin);
+	}
+
+	player->RemoveFlag(FL_BASEVELOCITY);
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: Predicts a single movement command for player
 // Input  : *moveHelper - 
 //			*player - 
@@ -869,7 +905,7 @@ void CPrediction::RunCommand( C_BasePlayer *player, CUserCmd *ucmd, IMoveHelper 
 	player->UpdateButtonState( ucmd->buttons );
 
 // TODO
-//	CheckMovingGround( player, ucmd->frametime );
+	CheckMovingGround( player, gpGlobals->frametime);
 
 // TODO
 //	g_pMoveData->m_vecOldAngles = player->pl.v_angle;

@@ -1079,6 +1079,8 @@ public:
 	virtual const Vector &GetViewOffset() const;
 	virtual void		  SetViewOffset( const Vector& v );
 
+	virtual void		GetGroundVelocityToApply(Vector &vecGroundVel) { vecGroundVel = vec3_origin; }
+
 #ifdef SIXENSE
 	const Vector&		GetEyeOffset() const;
 	void				SetEyeOffset( const Vector& v );
