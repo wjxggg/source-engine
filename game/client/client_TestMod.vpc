@@ -109,6 +109,8 @@ $Project "Client (TestMod)"
 			$File	"$SRCDIR\game\shared\TestMod\bot\shared_util.cpp"
 			$File	"$SRCDIR\game\shared\TestMod\bot\shared_util.h"
 			$File	"TestMod\vgui_rootpanel_cs.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\projectile.cpp"
+			$File	"$SRCDIR\game\shared\TestMod\projectile.h"
 			
 			$Folder "HUD Elements"
 			{

@@ -7,20 +7,16 @@
 #include "cbase.h"
 #include "weapon_csbase.h"
 #include "fx_cs_shared.h"
+#include "projectile.h"
 
 #if defined( CLIENT_DLL )
 
 	#define CWeaponM4A1 C_WeaponM4A1
 	#include "c_cs_player.h"
-
 #else
 
 	#include "cs_player.h"
-
 	#include "datacache/imdlcache.h"
-	#include "props.h"
-	#include "projectile.h"
-
 #endif
 
 class CWeaponM4A1 : public CWeaponCSBase
@@ -47,6 +43,8 @@ private:
 	CWeaponM4A1( const CWeaponM4A1 & );
 
 	float m_flCycleTime;
+
+	bool b;
 };
 
 IMPLEMENT_NETWORKCLASS_ALIASED( WeaponM4A1, DT_WeaponM4A1 )
@@ -67,6 +65,7 @@ PRECACHE_WEAPON_REGISTER( weapon_m4a1 );
 CWeaponM4A1::CWeaponM4A1()
 {
 	m_flCycleTime = 0.16f;
+	b = true;
 }
 
 void CWeaponM4A1::Precache(void)
@@ -84,6 +83,7 @@ float CWeaponM4A1::GetSpread() const
 	return 0;
 }
 
+/*
 void CWeaponM4A1::PrimaryAttack()
 {
 	CCSPlayer *pPlayer = GetPlayerOwner();
@@ -134,6 +134,33 @@ void CWeaponM4A1::PrimaryAttack()
 	pPlayer = GetPlayerOwner();
 	if (!pPlayer)
 		return;
+}
+*/
+
+void CWeaponM4A1::PrimaryAttack()
+{
+	CCSPlayer *pPlayer = GetPlayerOwner();
+	Vector forward;
+	pPlayer->EyeVectors(&forward);
+	Vector vTraceStart, vTraceEnd;
+	vTraceStart = pPlayer->Weapon_ShootPosition();
+	vTraceEnd = pPlayer->Weapon_ShootPosition() + forward * MAX_TRACE_LENGTH;
+
+	trace_t tr;
+	UTIL_TraceLine(vTraceStart, vTraceEnd, MASK_NPCSOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
+	CProjectile *target = dynamic_cast<CProjectile *>(tr.m_pEnt);
+	//CDynamicProp *target = dynamic_cast<CDynamicProp *>(tr.m_pEnt);
+	if (target)
+	{
+		IPhysicsObject *pObject = target->VPhysicsGetObject();
+
+		#ifdef CLIENT_DLL
+		Msg("Client: %fl\n", 1);
+		#else
+		Msg("Server: %fl\n", 1);
+		#endif
+	}
+	else Msg("No hit\n");
 }
 
 void CWeaponM4A1::SecondaryAttack()
@@ -207,6 +234,7 @@ void CWeaponM4A1::SecondaryAttack()
 
 	// Try to create entity
 	CProjectile *pProp = dynamic_cast<CProjectile *>(CreateEntityByName("prop_projectile"));
+	//CDynamicProp *pProp = dynamic_cast<CDynamicProp *>(CreateEntityByName("prop_dynamic"));
 	if (pProp)
 	{
 		char buf[512];
@@ -223,18 +251,29 @@ void CWeaponM4A1::SecondaryAttack()
 		pProp->KeyValue("inertiaScale", "1.0");
 		pProp->KeyValue("physdamagescale", "0.1");
 
-		// must before Activate()
-		pProp->SetModelScale(0.625f);
-
 		pProp->Precache();
 		DispatchSpawn(pProp);
 
 		pProp->SetPhysicsActive(false);
 
-		pProp->Activate();
+		if (b)
+		{
+			// physics absbox wrong
+			// dynamic collision box correct but player stuck on prop
+			pProp->Activate();
+			pProp->SetModelScale(0.5f);
+			b = !b;
+		}
+		else
+		{
+			// physics correct
+			// dynamic no collision box
+			pProp->SetModelScale(0.5f);
+			pProp->Activate();
+			b = !b;
+		}
 
-		// must after Activate()
-		pProp->SetCollisionBoundsFromModel();
+		//pProp->SetCollisionBoundsFromModel();
 	}
 	CBaseEntity::SetAllowPrecache(bAllowPrecache);
 

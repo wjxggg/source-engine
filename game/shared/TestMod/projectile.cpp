@@ -1,10 +1,31 @@
 #include "projectile.h"
-#include "util.h"
+
+#ifdef CLIENT_DLL
+
+IMPLEMENT_CLIENTCLASS_DT(CProjectile, DT_Projectile, CProjectile)
+RecvPropBool(RECVINFO(m_bVPhysicsActive)),
+END_RECV_TABLE()
+
+void CProjectile::SetPhysicsActive(bool enable)
+{
+	// Do nothing on client side
+}
+
+bool CProjectile::IsPhysicsActive(void)
+{
+	return m_bVPhysicsActive;
+}
+
+#else
 
 LINK_ENTITY_TO_CLASS(prop_projectile, CProjectile);
 
 BEGIN_DATADESC(CProjectile)
 END_DATADESC()
+
+IMPLEMENT_SERVERCLASS_ST(CProjectile, DT_Projectile)
+SendPropBool(SENDINFO(m_bVPhysicsActive)),
+END_SEND_TABLE()
 
 void CProjectile::SetPhysicsActive(bool enable)
 {
@@ -22,18 +43,4 @@ bool CProjectile::IsPhysicsActive(void)
 	return m_bVPhysicsActive;
 }
 
-void CProjectile::VPhysicsUpdate(IPhysicsObject *pPhysics)
-{
-	if (m_bVPhysicsActive)
-	{
-		BaseClass::VPhysicsUpdate(pPhysics);
-	}
-}
-
-void CProjectile::VPhysicsCollision(int index, gamevcollisionevent_t *pEvent)
-{
-	if (m_bVPhysicsActive)
-	{
-		BaseClass::VPhysicsCollision(index, pEvent);
-	}
-}
+#endif
