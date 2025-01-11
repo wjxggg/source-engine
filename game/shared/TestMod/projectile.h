@@ -3,7 +3,6 @@
 #include "cbase.h"
 
 #ifdef CLIENT_DLL
-	#include "c_props.h"
 	#include "c_physicsprop.h"
 	#define CPhysicsProp C_PhysicsProp
 #else

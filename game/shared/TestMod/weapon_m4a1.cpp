@@ -137,6 +137,10 @@ void CWeaponM4A1::PrimaryAttack()
 }
 */
 
+bool getProp = true;
+CProjectile *target;
+#include "collisionutils.h"
+
 void CWeaponM4A1::PrimaryAttack()
 {
 	CCSPlayer *pPlayer = GetPlayerOwner();
@@ -144,23 +148,53 @@ void CWeaponM4A1::PrimaryAttack()
 	pPlayer->EyeVectors(&forward);
 	Vector vTraceStart, vTraceEnd;
 	vTraceStart = pPlayer->Weapon_ShootPosition();
-	vTraceEnd = pPlayer->Weapon_ShootPosition() + forward * MAX_TRACE_LENGTH;
+	vTraceEnd = pPlayer->Weapon_ShootPosition() + forward * SHOOT_POSITION_OFFSET_FORWARD;
 
-	trace_t tr;
-	UTIL_TraceLine(vTraceStart, vTraceEnd, MASK_NPCSOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
-	CProjectile *target = dynamic_cast<CProjectile *>(tr.m_pEnt);
-	//CDynamicProp *target = dynamic_cast<CDynamicProp *>(tr.m_pEnt);
+	//if (getProp)
+	//{
+		trace_t tr;
+		UTIL_TraceLine(vTraceStart, vTraceEnd, MASK_NPCSOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
+		if (dynamic_cast<CProjectile *>(tr.m_pEnt))
+			target = dynamic_cast<CProjectile *>(tr.m_pEnt);
+		//getProp = false;
+	//}
 	if (target)
 	{
-		IPhysicsObject *pObject = target->VPhysicsGetObject();
-
+		Ray_t ray;
+		ray.Init(vTraceStart, vTraceEnd);
+		ICollideable *c = target->GetCollideable();
+		trace_t tr;
 		#ifdef CLIENT_DLL
-		Msg("Client: %fl\n", 1);
+		target->DrawClientHitboxes(1000, true);
+		Msg("Client shoot hit: %d, %d\n", IntersectRayWithOBB(ray, c->GetCollisionOrigin(), c->GetCollisionAngles(), c->OBBMins(), c->OBBMaxs(), 0.03125f, &tr), c->TestHitboxes(ray, MASK_NPCSOLID, tr));
 		#else
-		Msg("Server: %fl\n", 1);
+		target->DrawServerHitboxes(1000, true);
+		Msg("Server shoot hit: %d, %d\n", IntersectRayWithOBB(ray, c->GetCollisionOrigin(), c->GetCollisionAngles(), c->OBBMins(), c->OBBMaxs(), 0.03125f, &tr), c->TestHitboxes(ray, MASK_NPCSOLID, tr));
 		#endif
 	}
-	else Msg("No hit\n");
+	//else Msg("No hit\n");
+
+	/*
+	CBaseEntity *target = pPlayer->GetGroundEntity();
+	if (target)
+	{
+		#ifdef CLIENT_DLL
+		Msg("Client: %s\n", target->GetClassname());
+		#else
+		Msg("Server: %s\n", target->GetClassname());
+		#endif
+	}
+	else
+	{
+		#ifdef CLIENT_DLL
+		Msg("Client: No ground\n");
+		#else
+		Msg("Server: No ground\n");
+		#endif
+	}
+	*/
+
+	m_flNextPrimaryAttack = gpGlobals->curtime + 0.2f;
 }
 
 void CWeaponM4A1::SecondaryAttack()
@@ -258,17 +292,13 @@ void CWeaponM4A1::SecondaryAttack()
 
 		if (b)
 		{
-			// physics absbox wrong
-			// dynamic collision box correct but player stuck on prop
-			pProp->Activate();
 			pProp->SetModelScale(0.5f);
+			pProp->Activate();
 			b = !b;
 		}
 		else
 		{
-			// physics correct
-			// dynamic no collision box
-			pProp->SetModelScale(0.5f);
+			//pProp->SetModelScale(2.0f);
 			pProp->Activate();
 			b = !b;
 		}
